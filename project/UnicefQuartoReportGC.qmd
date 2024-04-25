@@ -1,0 +1,93 @@
+---
+title: "Unicef's mission to an equal world"
+subtitle: "Unicef's report on people with limited sanitation services"
+author: "Gemma Cox"
+date: "2024-04-25"
+format: html
+---
+```{r}
+#| label: setup
+#| include: false
+
+# libraries
+library(tidyverse)
+library(maps)
+library(plotly)
+library(ggplot2)
+
+# data
+unicef_metadata <- read_csv("unicef_metadata.csv")
+unicef_indicator_1 <- read_csv("unicef_indicator_1.csv")
+unicef_indicator_2 <- read_csv("unicef_indicator_2.csv")
+data_right_3 <- read_csv("data_right_3.csv")
+
+# exercise 1
+data_join <- full_join(unicef_metadata, unicef_indicator_1)
+data_join <- full_join(unicef_metadata, unicef_indicator_1, 
+                       by = c("country", "year" = "time_period"))
+
+# exercise 2
+unicef_indicator_2$time_period <- as.numeric(unicef_indicator_2$time_period)
+data_join <- full_join(unicef_metadata, unicef_indicator_2)
+data_join <- full_join(unicef_metadata, unicef_indicator_2,
+                       by = c("country", "year" = "time_period"))
+
+# exercise 3
+data_join <- full_join(unicef_metadata, data_right_3)
+data_join <- full_join(unicef_metadata, data_right_3, by = c("country"))
+
+# transformations
+data_join <- unicef_metadata %>%
+  full_join(unicef_indicator_1, 
+            by = c("country", "year" = "time_period")) %>%
+  full_join(unicef_indicator_2, 
+            by = c("country", "year" = "time_period")) %>%
+  full_join(data_right_3, by = c("country"))
+```
+These graphs report on...
+
+## This map
+```{r}
+#| fig-cap: "This map details"
+
+map_world <- map_data("world")
+
+data_join %>%
+  filter(year == 2018) %>%
+  full_join(map_world, by = c("country" = "region")) %>%
+  ggplot(aes(x = long, y = lat, group = group, fill = `Life expectancy at birth, 
+  total (years)`)) + geom_polygon() + scale_fill_gradient(low = "red", high = 
+  "green", na.value = "grey") + labs(x = "", y = "", title = "A World Map 
+  revealing the life expectancy at birth in the year 2018") + theme_classic() +
+  theme(text = element_text(family = "helvetica"))
+```
+
+```{r}
+#| fig-cap: "hi:)"
+
+# bar chart :)
+
+data_join_bar <- full_join(data_right_3, unicef_indicator_1, by = c("country"))
+ggplot(subset(data_join_bar, time_period %in% c("2016", "2017", "2018")), 
+       aes(x=continent, y=obs_value), fill = sex) + 
+  geom_bar(stat="identity", width=0.5) + facet_wrap(~ time_period, nrow = 1) + scale_x_discrete(limits = 
+       c("Africa", "Europe", "Asia", "Americas")) + 
+         scale_y_continuous(limits = c(0,100)) + 
+  labs(x = "", y = "People who have limited sanitation", title = 
+         "The Percentage of people who have limited sanitation services between 2016-2018") +
+  theme_classic() +
+  theme(text = element_text(family = "helvetica")) + 
+  scale_fill_manual(values = c("#00AFBB", "#4FB05E", "#DB245E", "#FFE800"))
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+

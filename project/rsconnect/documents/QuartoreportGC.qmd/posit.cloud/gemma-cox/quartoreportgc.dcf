@@ -1,0 +1,14 @@
+name: quartoreportgc
+title: QuartoreportGC
+username: gemma-cox
+account: gemma-cox
+server: posit.cloud
+hostUrl: https://api.posit.cloud/v1
+appId: 8092637
+bundleId: 8539064
+url: https://posit.cloud/content/8092637
+version: 1
+quarto_version: 1.4.550
+quarto_engines: knitr
+asMultiple: FALSE
+asStatic: FALSE
